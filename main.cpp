@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Settings.hpp"
 #include "World.hpp"
 
 static constexpr float CellWidth = 10.0f;
@@ -9,6 +10,12 @@ static constexpr float CellHeight = CellWidth;
 
 int main()
 {
+    Settings settings;
+    settings.windowWidth = 800;
+    settings.windowHeight = 800;
+    settings.cellSize = 4;
+    settings.stepsPerSecondLimit = 10;
+
     World world;
 
     // Blinker
