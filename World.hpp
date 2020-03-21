@@ -1,22 +1,34 @@
 #ifndef WORLD_HPP_
 #define WORLD_HPP_
 
+#include <vector>
+
 class World
 {
 public:
 
-	static constexpr int Width = 192;
-	static constexpr int Height = 108;
+    static constexpr char DeadCell = '\0';
+    static constexpr char LiveCell = DeadCell + 1;
 
-	bool & getCell(int x, int y);
+    World(int width, int height);
 
-	void performTimeStep();
-	void setRandomState();
+    int getWidth() const;
+    int getHeight() const;
+    char & getCell(int x, int y);
+
+    void performTimeStep();
+    void setRandomState();
 
 private:
 
-	using Cells = bool[Height + 2][Width + 2];
-	Cells cells = {};
+    const int Width;
+    const int Height;
+
+    const int BufferWidth;
+    const int BufferHeight;
+
+    using Cells = std::vector<char>;
+    Cells cells = {};
 };
 
 #endif /* WORLD_HPP_ */

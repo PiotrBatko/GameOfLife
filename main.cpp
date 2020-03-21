@@ -1,50 +1,66 @@
 #include "SFML/Graphics.hpp"
 
+#include <exception>
 #include <iostream>
 
 #include "Settings.hpp"
 #include "World.hpp"
-
-static constexpr float CellWidth = 10.0f;
-static constexpr float CellHeight = CellWidth;
 
 int main()
 {
     Settings settings;
     settings.windowWidth = 800;
     settings.windowHeight = 800;
-    settings.cellSize = 4;
+    settings.fullScreenOn = false;
+    settings.cellSize = 10;
     settings.stepsPerSecondLimit = 10;
 
-    World world;
+    if (settings.windowWidth % settings.cellSize != 0)
+    {
+        throw std::runtime_error("Window width is not divisible by cell size");
+    }
+
+    if (settings.windowHeight % settings.cellSize != 0)
+    {
+        throw std::runtime_error("Window height is not divisible by cell size");
+    }
+
+    const int NumberOfCellsInRow    = settings.windowWidth  / settings.cellSize;
+    const int NumberOfCellsInColumn = settings.windowHeight / settings.cellSize;
+
+    World world(NumberOfCellsInRow, NumberOfCellsInColumn);
 
     // Blinker
-    world.getCell(2, 11) = true;
-    world.getCell(3, 11) = true;
-    world.getCell(4, 11) = true;
+    world.getCell(2, 11) = World::LiveCell;
+    world.getCell(3, 11) = World::LiveCell;
+    world.getCell(4, 11) = World::LiveCell;
 
     // Block
-    world.getCell(10, 11) = true;
-    world.getCell(10, 12) = true;
-    world.getCell(11, 11) = true;
-    world.getCell(11, 12) = true;
+    world.getCell(10, 11) = World::LiveCell;
+    world.getCell(10, 12) = World::LiveCell;
+    world.getCell(11, 11) = World::LiveCell;
+    world.getCell(11, 12) = World::LiveCell;
 
     // Glider
-    world.getCell(15, 5) = true;
-    world.getCell(16, 6) = true;
-    world.getCell(17, 4) = true;
-    world.getCell(17, 5) = true;
-    world.getCell(17, 6) = true;
+    world.getCell(15, 5) = World::LiveCell;
+    world.getCell(16, 6) = World::LiveCell;
+    world.getCell(17, 4) = World::LiveCell;
+    world.getCell(17, 5) = World::LiveCell;
+    world.getCell(17, 6) = World::LiveCell;
 
     // Tub
-    world.getCell(10, 30) = true;
-    world.getCell(9, 31) = true;
-    world.getCell(11, 31) = true;
-    world.getCell(10, 32) = true;
+    world.getCell(10, 30) = World::LiveCell;
+    world.getCell( 9, 31) = World::LiveCell;
+    world.getCell(11, 31) = World::LiveCell;
+    world.getCell(10, 32) = World::LiveCell;
 
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Game of life", sf::Style::Fullscreen);
+    sf::RenderWindow window(
+        sf::VideoMode(settings.windowWidth, settings.windowHeight),
+        "Game of life",
+        settings.fullScreenOn ? sf::Style::Fullscreen : sf::Style::Default
+    );
 
-    sf::RectangleShape cellView(sf::Vector2f(CellWidth, CellHeight));
+    sf::RectangleShape cellView(sf::Vector2f(settings.cellSize, settings.cellSize));
     cellView.setOutlineColor(sf::Color(32, 32, 32));
     cellView.setOutlineThickness(-0.5f);
 
@@ -69,15 +85,17 @@ int main()
 
         window.clear();
 
-        for (int y = 0; y < World::Height; ++y)
+        for (int y = 0; y < world.getHeight(); ++y)
         {
-            for (int x = 0; x < World::Width; ++x)
+            for (int x = 0; x < world.getWidth(); ++x)
             {
-                sf::Vector2f position
-                {x * CellWidth, y * CellHeight};
+                sf::Vector2f position{
+                    static_cast<float>(x * settings.cellSize),
+                    static_cast<float>(y * settings.cellSize)
+                };
                 cellView.setPosition(position);
 
-                if (world.getCell(x, y) == true)
+                if (world.getCell(x, y) == World::LiveCell)
                 {
                     cellView.setFillColor(sf::Color(255, 192, 0));
 

@@ -5,6 +5,7 @@ struct Settings
 {
     int windowWidth;
     int windowHeight;
+    bool fullScreenOn;
 
     int cellSize;
 
