@@ -64,6 +64,39 @@ int main()
     cellView.setOutlineColor(sf::Color(32, 32, 32));
     cellView.setOutlineThickness(-0.5f);
 
+    sf::RenderTexture cellTextures;
+    cellTextures.create(2 * settings.cellSize, settings.cellSize);
+
+    // Live cell
+    cellView.setPosition(0, 0);
+    cellView.setFillColor(sf::Color(255, 192, 0));
+    cellTextures.draw(cellView);
+
+    // Dead cell
+    cellView.setPosition(settings.cellSize, 0);
+    cellView.setFillColor(sf::Color(64, 64, 64));
+    cellTextures.draw(cellView);
+
+    sf::Sprite CellLiveView(
+        cellTextures.getTexture(),
+        sf::IntRect(
+            0,
+            0,
+            settings.cellSize,
+            settings.cellSize
+        )
+    );
+
+    sf::Sprite CellDeadView(
+        cellTextures.getTexture(),
+        sf::IntRect(
+            settings.cellSize,
+            0,
+            settings.cellSize,
+            settings.cellSize
+        )
+    );
+
     sf::Font font;
     font.loadFromFile("Resources/Lato-Regular.ttf");
 
@@ -109,19 +142,17 @@ int main()
                     static_cast<float>(x * settings.cellSize),
                     static_cast<float>(y * settings.cellSize)
                 };
-                cellView.setPosition(position);
 
                 if (world.getCell(x, y) == World::LiveCell)
                 {
-                    cellView.setFillColor(sf::Color(255, 192, 0));
-
+                    CellLiveView.setPosition(position);
+                    window.draw(CellLiveView);
                 }
                 else
                 {
-                    cellView.setFillColor(sf::Color(64, 64, 64));
+                    CellDeadView.setPosition(position);
+                    window.draw(CellDeadView);
                 }
-
-                window.draw(cellView);
             }
         }
 
