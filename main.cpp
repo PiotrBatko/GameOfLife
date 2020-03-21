@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <iostream>
+#include <string>
 
 #include "Settings.hpp"
 #include "World.hpp"
@@ -64,6 +65,22 @@ int main()
     cellView.setOutlineColor(sf::Color(32, 32, 32));
     cellView.setOutlineThickness(-0.5f);
 
+    sf::Font font;
+    font.loadFromFile("Resources/Lato-Regular.ttf");
+
+    sf::Text fpsText;
+    fpsText.setFont(font);
+    fpsText.setCharacterSize(32);
+    fpsText.setFillColor(sf::Color(255, 255, 255));
+    fpsText.setString("FPS:");
+    fpsText.setPosition(
+        settings.windowWidth - fpsText.getLocalBounds().width - 100,
+        20
+    );
+
+    int fpsCounter = 0;
+    sf::Clock fpsClock;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -108,9 +125,21 @@ int main()
                 window.draw(cellView);
             }
         }
+
+        ++fpsCounter;
+
+        if (fpsClock.getElapsedTime() >= sf::seconds(1))
+        {
+            fpsText.setString("FPS: " + std::to_string(fpsCounter));
+
+            fpsClock.restart();
+            fpsCounter = 0;
+        }
+
+        window.draw(fpsText);
+
         window.display();
 
-        //sf::sleep(sf::milliseconds(20));
     }
 
     return 0;
