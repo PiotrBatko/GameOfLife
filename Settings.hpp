@@ -8,8 +8,6 @@ struct Settings
     bool fullScreenOn;
 
     int cellSize;
-
-    int stepsPerSecondLimit;
 };
 
 #endif

@@ -14,7 +14,6 @@ int main()
     settings.windowHeight = 800;
     settings.fullScreenOn = false;
     settings.cellSize = 10;
-    settings.stepsPerSecondLimit = 10;
 
     if (settings.windowWidth % settings.cellSize != 0)
     {
